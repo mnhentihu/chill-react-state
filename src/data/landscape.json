@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Avatar: The Way of Water",
+    "image": "/landscape/avatar-landscape.png",
+    "rating": "4.7"
+  },
+  {
+    "id": 2,
+    "title": "Blue Lock",
+    "image": "/landscape/bluelock-landscape.png",
+    "rating": "4.2"
+  },
+  {
+    "id": 3,
+    "title": "Fast X",
+    "image": "/landscape/fastx-landscape.png",
+    "rating": "4.0"
+  },
+  {
+    "id": 4,
+    "title": "My Perfect Stranger",
+    "image": "/landscape/myperfectstranger-landscape.png",
+    "rating": "4.5"
+  },
+  {
+    "id": 5,
+    "title": "The Man Called Otto",
+    "image": "/landscape/otto-landscape.png",
+    "rating": "4.6"
+  },
+  {
+    "id": 6,
+    "title": "Shazam",
+    "image": "/landscape/shazam-landscape.png",
+    "rating": "4.1"
+  }
+]
