@@ -5,7 +5,7 @@ import Button from "../components/Button";
 
 function Register() {
   return (
-    <div className="bg-[url(./assets/backgrounds/BG_Daftar.jpeg)] bg-cover bg-no-repeat bg-center bg-fixed font-lato">
+    <div className="bg-[url(/backgrounds/BG_Daftar.jpeg)] bg-cover bg-no-repeat bg-center bg-fixed font-lato">
       <div className="flex justify-center items-center text-white h-screen">
         <div className="bg-primary/[0.84] w-4/5 sm:w-1/4 h-fit px-4 py-4 sm:px-8 sm:py-8 rounded-xl">
           <div className="flex flex-col justify-center items-center gap-3 mb-3 sm:gap-8 sm:mb-8">
