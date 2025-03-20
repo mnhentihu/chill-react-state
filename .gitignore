@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+supabasepassword.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
