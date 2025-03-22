@@ -1,9 +1,34 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 import google from "/logos/google logo.png.png";
 import Button from "../components/Button";
+import { useState } from "react";
+import { supabase } from "../data/supabase";
 
 function Login() {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const navigate = useNavigate();
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleLogin() {
+    const { data: user } = await supabase
+      .from("users")
+      .select("*")
+      .eq("username", form.username)
+      .eq("password", form.password)
+      .single();
+
+    if (user) {
+      localStorage.setItem("loggedInUser", user.username);
+      navigate("/dashboard");
+    } else {
+      alert("Username atau password salah!");
+    }
+  }
+
   return (
     <div className="bg-[url(/backgrounds/BG_Login.jpeg)] bg-cover bg-no-repeat bg-fixed font-lato">
       <div className="flex justify-center items-center text-white h-screen">
@@ -31,6 +56,9 @@ function Login() {
               <input
                 type="text"
                 placeholder="Masukkan username"
+                name="username"
+                value={form.username}
+                onChange={handleChange}
                 className="w-full h-10 sm:h-12 rounded-full px-3 bg-transparent border border-tertiary font-thin sm:font-normal"
               />
             </div>
@@ -41,6 +69,9 @@ function Login() {
               <input
                 type="password"
                 placeholder="Masukkan kata sandi"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 className="w-full h-10 sm:h-12 rounded-full px-3 bg-transparent border border-tertiary font-thin sm:font-normal"
               />
             </div>
@@ -63,9 +94,7 @@ function Login() {
             </a>
           </div>
           <div className="flex flex-col justify-center items-center w-full gap-2.5">
-            <Button className="">
-              <NavLink to="/dashboard">Masuk</NavLink>
-            </Button>
+            <Button onClick={handleLogin}>Masuk</Button>
             <span className="font-light text-xs sm:font-normal sm:text-base">
               Atau
             </span>

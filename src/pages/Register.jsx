@@ -1,9 +1,62 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 import google from "/logos/google logo.png.png";
 import Button from "../components/Button";
 
+import { supabase } from "../data/supabase";
+import { useState } from "react";
+
 function Register() {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleRegister() {
+    console.log("Register button clicked");
+
+    if (!form.username || !form.password) {
+      setMessage("Username dan password wajib diisi!");
+      return;
+    }
+
+    console.log("Checking existing user...");
+
+    const { data: existingUser, error: checkError } = await supabase
+      .from("users")
+      .select("username")
+      .eq("username", form.username)
+      .single();
+
+    console.log("Existing user result:", existingUser, checkError);
+
+    if (existingUser) {
+      setMessage("Username sudah digunakan!");
+      return;
+    }
+
+    console.log("Inserting new user...");
+
+    const { error } = await supabase
+      .from("users")
+      .insert([{ username: form.username, password: form.password }], {
+        head: true,
+      });
+
+    console.log("Insert result:", error);
+
+    if (error) {
+      console.error("Insert error:", error.message);
+      setMessage("Gagal mendaftar: " + error.message);
+    } else {
+      setMessage("Registrasi berhasil! Silakan login.");
+      setTimeout(() => navigate("/login"), 2000);
+    }
+  }
+
   return (
     <div className="bg-[url(/backgrounds/BG_Daftar.jpeg)] bg-cover bg-no-repeat bg-center bg-fixed font-lato">
       <div className="flex justify-center items-center text-white h-screen">
@@ -30,7 +83,10 @@ function Register() {
               </label>
               <input
                 type="text"
+                name="username"
                 placeholder="Masukkan username"
+                value={form.username}
+                onChange={handleChange}
                 className="w-full h-10 sm:h-12 rounded-full px-3 bg-transparent border border-tertiary font-thin sm:font-normal"
               />
             </div>
@@ -40,7 +96,10 @@ function Register() {
               </label>
               <input
                 type="password"
+                name="password"
                 placeholder="Masukkan kata sandi"
+                value={form.password}
+                onChange={handleChange}
                 className="w-full h-10 sm:h-12 rounded-full px-3 bg-transparent border border-tertiary font-thin sm:font-normal"
               />
             </div>
@@ -50,10 +109,12 @@ function Register() {
               </label>
               <input
                 type="password"
+                name="confirmPassword"
                 placeholder="Masukkan kata sandi"
                 className="w-full h-10 sm:h-12 rounded-full px-3 bg-transparent border border-tertiary font-thin sm:font-normal"
               />
             </div>
+            <span className="text-red-500 text-xs sm:text-sm">{message}</span>
           </form>
           <div className="flex justify-between items-center mb-10">
             <span className="font-thin text-sm sm:font-light sm:text-base">
@@ -67,9 +128,7 @@ function Register() {
             </span>
           </div>
           <div className="flex flex-col justify-center items-center w-full gap-2.5">
-            <Button>
-              <NavLink to="/dashboard">Daftar</NavLink>
-            </Button>
+            <Button onClick={handleRegister}>Daftar</Button>
             <span className="font-light text-xs sm:font-normal sm:text-base">
               Atau
             </span>
