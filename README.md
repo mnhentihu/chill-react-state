@@ -1,9 +1,11 @@
-Install Iconify
+# Install Iconify
 npm install --save-dev @iconify/react
+
 yarn add --dev @iconify/react
 
-Install Supabase
+# Install Supabase
 npm install @supabase/supabase-js
+
 yarn add @supabase/supabase-js
 
 # React + Vite
