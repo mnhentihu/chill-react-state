@@ -5,6 +5,8 @@ import Footer from "../components/Footer";
 import potrait from "../data/potrait.json";
 import landscape from "../data/landscape.json";
 import ContinueWatch from "../components/ContinueWatch";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function Dashboard() {
   // Fungsi sorting
@@ -13,6 +15,17 @@ function Dashboard() {
   const newRelease = [...potrait].sort(
     (a, b) => new Date(b.update_at) - new Date(a.update_at)
   );
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    console.log("loggedInUser:", loggedInUser);
+    if (!loggedInUser) {
+      console.log("Navigating to login...");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <>

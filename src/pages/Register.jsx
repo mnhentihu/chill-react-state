@@ -1,10 +1,9 @@
 import { NavLink, useNavigate } from "react-router";
+import { supabase } from "../data/supabase";
+import { useState } from "react";
 
 import google from "/logos/google logo.png.png";
 import Button from "../components/Button";
-
-import { supabase } from "../data/supabase";
-import { useState } from "react";
 
 function Register() {
   const [form, setForm] = useState({ username: "", password: "" });

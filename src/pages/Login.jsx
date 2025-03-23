@@ -1,9 +1,9 @@
 import { NavLink, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "../data/supabase";
 
 import google from "/logos/google logo.png.png";
 import Button from "../components/Button";
-import { useState } from "react";
-import { supabase } from "../data/supabase";
 
 function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -22,12 +22,24 @@ function Login() {
       .single();
 
     if (user) {
-      localStorage.setItem("loggedInUser", user.username);
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify([{ id: user.id, username: user.username }])
+      );
       navigate("/dashboard");
     } else {
       alert("Username atau password salah!");
     }
   }
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    console.log("loggedInUser:", loggedInUser);
+    if (loggedInUser) {
+      console.log("Navigating to dashboard...");
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   return (
     <div className="bg-[url(/backgrounds/BG_Login.jpeg)] bg-cover bg-no-repeat bg-fixed font-lato">

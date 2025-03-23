@@ -1,19 +1,25 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
+
+  function handleLogout() {
+    localStorage.removeItem("loggedInUser");
+    navigate("/login");
+  }
 
   return (
     <div className="bg-primary">
       <nav className="h-fit py-5 flex justify-center">
         <div className="w-11/12 flex flex-row justify-between items-center">
           <div className="flex justify-center items-center gap-3 sm:gap-20 text-white text-base">
-            <NavLink to="/">
+            <NavLink to="/dashboard">
               {isMobile ? (
                 <img
                   id="nav-logo"
@@ -56,7 +62,7 @@ function Navbar() {
               <ul className="p-1">
                 <li>
                   <NavLink
-                    to="/#"
+                    to="/profile"
                     className=" flex gap-2 px-4 py-2 text-sm hover:text-button focus:text-button"
                   >
                     <Icon icon="ooui:user-avatar" width="18" height="18" />
@@ -73,13 +79,13 @@ function Navbar() {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink
-                    to="/login"
+                  <button
+                    onClick={handleLogout}
                     className=" flex gap-2 px-4 py-2 text-sm hover:text-button focus:text-button"
                   >
                     <Icon icon="ci:exit" width="18" height="18" />
                     Keluar
-                  </NavLink>
+                  </button>
                 </li>
               </ul>
             </div>
