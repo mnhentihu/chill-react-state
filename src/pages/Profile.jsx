@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../data/supabase";
 import { useNavigate } from "react-router";
 
 import Navbar from "../components/Navbar";
@@ -25,83 +24,7 @@ function Profile() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function handleUpdate(e) {
-    console.log("Profile change button clicked");
-    e.preventDefault();
-
-    const userId = userData.id;
-
-    // Ambil data user saat ini dari database
-    const { data: currentUser, error: userError } = await supabase
-      .from("users")
-      .select("username, password")
-      .eq("id", userId)
-      .single();
-
-    if (userError) {
-      console.error("Error fetching current user data:", userError.message);
-      return;
-    }
-
-    // Tentukan nilai baru berdasarkan input, jika kosong pakai yang lama
-    const updatedUsername = form.username || currentUser.username;
-    const updatedPassword = form.password || currentUser.password;
-
-    // Cek apakah username sudah digunakan oleh user lain
-    if (form.username) {
-      const { data: existingUser, error: checkError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("username", form.username)
-        .neq("id", userId) // Pastikan bukan username milik sendiri
-        .single();
-
-      if (existingUser) {
-        console.log(
-          "Username sudah ada yang menggunakan!",
-          existingUser,
-          checkError
-        );
-        return;
-      }
-    }
-
-    console.log("Update data...");
-
-    const { data, error } = await supabase
-      .from("users")
-      .update({ username: updatedUsername, password: updatedPassword })
-      .eq("id", userId);
-
-    if (error) {
-      console.error("Error updating user:", error.message);
-    } else {
-      console.log("User updated successfully", data);
-      setUserData((prev) => ({ ...prev, username: updatedUsername })); // Update state userData
-
-      // Update localStorage dengan data terbaru
-      const updatedUserData = [{ ...userData, username: updatedUsername }];
-      localStorage.setItem("loggedInUser", JSON.stringify(updatedUserData));
-
-      // Reset form setelah submit
-      setForm({ username: "", password: "" });
-    }
-  }
-
-  async function handleDelete() {
-    console.log("Hapus akun clicked");
-    const { error } = await supabase
-      .from("users")
-      .delete()
-      .eq("id", userData.id);
-    if (error) {
-      console.log("Gagal menghapus akun");
-    } else {
-      console.log("Akun berhasil dihapus");
-      localStorage.removeItem("loggedInUser");
-      setTimeout(() => navigate("/login"), 2000);
-    }
-  }
+  console.log("Update data...");
 
   return (
     <>

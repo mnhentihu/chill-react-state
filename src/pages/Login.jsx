@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "../data/supabase";
 
 import google from "/logos/google logo.png.png";
 import Button from "../components/Button";
@@ -11,25 +10,6 @@ function Login() {
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  async function handleLogin() {
-    const { data: user } = await supabase
-      .from("users")
-      .select("*")
-      .eq("username", form.username)
-      .eq("password", form.password)
-      .single();
-
-    if (user) {
-      localStorage.setItem(
-        "loggedInUser",
-        JSON.stringify([{ id: user.id, username: user.username }])
-      );
-      navigate("/dashboard");
-    } else {
-      alert("Username atau password salah!");
-    }
   }
 
   useEffect(() => {
