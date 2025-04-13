@@ -22,13 +22,18 @@ export const useUserStore = create((set) => ({
       set((state) => ({ users: [...state.users, newUser] }));
     }
   },
+  login: async ({ username, password }) => {
+    const users = await loginUser(username, password); // Kirim username dan password
+    console.log("All users:", users); // Debugging
 
-  login: async (username, password) => {
-    const user = await loginUser(username, password);
-    set({ currentUser: user });
-    return user;
+    if (users) {
+      localStorage.setItem("loggedInUser", JSON.stringify(users));
+      set({ currentUser: users });
+      return users;
+    } else {
+      return null;
+    }
   },
-
   logout: () => set({ currentUser: null }),
 
   updateProfile: async (id, updatedData) => {

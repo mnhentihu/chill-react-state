@@ -4,27 +4,57 @@ import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+import { useUserStore } from "../services/stores/userStorage";
+
 function Profile() {
-  const [userData, setUserData] = useState("");
-  const [form, setForm] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const { currentUser, updateProfile, deleteAccount } = useUserStore();
+  const [form, setForm] = useState({ username: "", password: "" });
 
-  // Ambil data user dari localStorage saat pertama kali render
+  // Cek apakah user sudah login
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (!loggedInUser) {
-      console.log("Navigating to login...");
-      navigate("/login");
-      return;
+    if (!currentUser) {
+      const localUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (localUser) {
+        // Optional: jika ingin sync ke Zustand saat reload
+        useUserStore.setState({ currentUser: localUser });
+        setForm({ username: localUser.username, password: localUser.password });
+      } else {
+        navigate("/login");
+      }
+    } else {
+      setForm({
+        username: currentUser.username,
+        password: currentUser.password,
+      });
     }
-    setUserData(loggedInUser[0]);
-  }, [navigate]);
+  }, [currentUser, navigate]);
 
-  function handleChange(e) {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  };
 
-  console.log("Update data...");
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    await updateProfile(currentUser.id, form);
+    alert("Profil berhasil diperbarui.");
+
+    const updatedUser = { ...currentUser, ...form };
+    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+  };
+
+  const handleDelete = async () => {
+    if (!currentUser) return;
+
+    const confirmDelete = confirm("Yakin ingin menghapus akun?");
+    if (confirmDelete) {
+      await deleteAccount(currentUser.id);
+      localStorage.removeItem("loggedInUser");
+      navigate("/login");
+    }
+  };
 
   return (
     <>
@@ -33,12 +63,17 @@ function Profile() {
         <div className="container w-11/12">
           <h1 className="text-white my-7 text-2xl">Profile Saya</h1>
           <div className="profile-pict flex items-center gap-2 text-white">
-            <img src="./avatar.jpg" alt="" className="w-24 h-24 rounded-full" />
+            <img
+              src={currentUser?.avatar || "./avatar.jpg"}
+              alt=""
+              className="w-24 h-24 rounded-full"
+            />
             <div className="info">
               <h3>Hi!</h3>
-              <span>{userData.username}</span>
+              <span>{form.username}</span>
             </div>
           </div>
+
           <form onSubmit={handleUpdate} className="flex flex-col gap-4 mt-4">
             <input
               type="text"
@@ -56,6 +91,7 @@ function Profile() {
               onChange={handleChange}
               className="w-1/3 h-10 sm:h-12 rounded-lg px-3 bg-transparent border border-tertiary font-thin sm:font-normal text-white"
             />
+
             <div className="actions flex gap-4">
               <button
                 type="submit"

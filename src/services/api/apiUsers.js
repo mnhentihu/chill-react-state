@@ -1,7 +1,6 @@
 const api_url = import.meta.env.VITE_API_URL;
 
 export async function getUsers() {
-  console.log(api_url);
   try {
     const response = await fetch(api_url, {
       method: "GET",
@@ -13,7 +12,8 @@ export async function getUsers() {
     }
 
     const data = await response.json();
-    return data;
+    console.log("Fetched data from API:", data); // Log data untuk memastikan format
+    return Array.isArray(data) ? data : []; // Pastikan data berupa array
   } catch (error) {
     console.error("Fetch error:", error);
     return [];
@@ -41,11 +41,20 @@ export async function addUser(newUser) {
 
 export async function loginUser(username, password) {
   try {
-    const users = await getUsers();
-    const user = users.find(
-      (u) => u.username === username && u.password === password
-    );
-    return user || null;
+    const users = await getUsers(); // Mendapatkan daftar user
+    console.log("Fetched users:", users); // Pastikan data ada dan berupa array
+
+    // Cek apakah data users berupa array
+    if (Array.isArray(users)) {
+      const user = users.find(
+        (u) => u.username === username && u.password === password
+      );
+      console.log("Found user:", user); // Pastikan pencarian berhasil
+      return user || null;
+    } else {
+      console.error("Data users bukan array:", users);
+      return null;
+    }
   } catch (error) {
     console.error("Login error:", error);
     return null;

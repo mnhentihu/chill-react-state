@@ -29,14 +29,17 @@ export async function handleRegister({ form, setMessage, navigate }) {
 }
 
 export async function handleLogin(form, setMessage, navigate) {
+  console.log("Login form data:", form);
   try {
     const user = await useUserStore.getState().login(form);
+    console.log("User found:", user);
     if (user) {
-      navigate("/dashboard"); // atau sesuaikan
+      navigate("/dashboard");
     } else {
       setMessage("Username atau password salah");
     }
   } catch (error) {
+    console.error("Login failed with error:", error);
     setMessage("Gagal login", error);
   }
 }

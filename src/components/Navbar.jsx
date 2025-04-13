@@ -1,16 +1,25 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { NavLink, useNavigate } from "react-router";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      setUser(JSON.parse(loggedInUser)); // Simpan user di state
+    }
+  }, []);
+
   function handleLogout() {
     localStorage.removeItem("loggedInUser");
+    setUser(null); // Reset state user
     navigate("/login");
   }
 
@@ -46,7 +55,12 @@ function Navbar() {
               className="flex items-center gap-1 focus:outline-no cursor-pointer"
               onClick={() => setIsOpen(!isOpen)}
             >
-              <img src="/avatar.jpg" alt="" className="w-8 rounded-full" />
+              {/* Gunakan avatar user jika tersedia */}
+              <img
+                src={user?.avatar || "/avatar.jpg"} // Jika avatar ada, pakai yang ada, jika tidak gunakan default
+                alt="User Avatar"
+                className="w-8 rounded-full"
+              />
               <Icon
                 icon="mdi:keyboard-arrow-down"
                 width="24"
